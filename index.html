@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Board</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .chat-board {
+            width: 360px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+        .chat-header {
+            padding: 18px 20px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .chat-history {
+            max-height: 420px;
+            overflow-y: auto;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: #f9fafb;
+        }
+        .message {
+            padding: 12px 14px;
+            border-radius: 14px;
+            max-width: 85%;
+            line-height: 1.5;
+        }
+        .message.user {
+            background: #eff6ff;
+            align-self: flex-end;
+            color: #1d4ed8;
+        }
+        .message.bot {
+            background: #e5e7eb;
+            align-self: flex-start;
+            color: #111827;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            padding: 16px 20px;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+        }
+        .chat-input input {
+            flex: 1;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            outline: none;
+        }
+        .chat-input button {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-board">
+        <div class="chat-header">Chat Board</div>
+        <div class="chat-history" id="chatHistory">
+            <div class="message bot">Hello! Enter a number or ask about our number.</div>
+        </div>
+        <form class="chat-input" id="chatForm">
+            <input type="text" id="chatInput" placeholder="Type your number inquiry..." autocomplete="off" />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script>
+        const chatHistory = document.getElementById('chatHistory');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+
+        function addMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = 'message ' + type;
+            message.textContent = text;
+            chatHistory.appendChild(message);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function getBotResponse(input) {
+            const trimmed = input.trim();
+            if (!trimmed) {
+                return 'Please enter a number or question about our number.';
+            }
+            const numberValue = Number(trimmed);
+            if (!Number.isNaN(numberValue)) {
+                return `You asked about the number ${numberValue}. How can I help more with it?`;
+            }
+            if (/number/i.test(trimmed)) {
+                return 'I can help with number inquiries. Please enter the number you want to check or ask about.';
+            }
+            return 'I am here for number inquiries. Try typing a number or a question containing the word "number".';
+        }
+
+        chatForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const userText = chatInput.value;
+            if (!userText.trim()) {
+                return;
+            }
+            addMessage(userText, 'user');
+            chatInput.value = '';
+            setTimeout(() => {
+                const response = getBotResponse(userText);
+                addMessage(response, 'bot');
+            }, 200);
+        });
+    </script>
+</body>
+</html>
